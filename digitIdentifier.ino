@@ -18,51 +18,40 @@ void loop() {
 
 void printer(tmElements_t _time){
   digitIdentifier((_time.Second/10)%10);
-  digitIdentifier(_time.Second%10);
-  Serial.println();
+  //digitIdentifier(_time.Second%10);
 }
 
 void digitIdentifier(int number){
   switch(number) {
     case 1:
-        Serial.print("One");
-        Serial.println();
+        one(a,b,c,d,e,f,g);
         break;
     case 2:
-        Serial.print("Two");
-        Serial.println();
+        two(a,b,c,d,e,f,g);
         break;
     case 3:
-        Serial.print("Three");
-        Serial.println();
+        three(a,b,c,d,e,f,g);
         break;
     case 4:
-        Serial.print("Four");
-        Serial.println();
+        four(a,b,c,d,e,f,g);
         break;
     case 5:
-        Serial.print("Five");
-        Serial.println();
+        five(a,b,c,d,e,f,g);
         break;
     case 6:
-        Serial.print("Six");
-        Serial.println();
+        six(a,b,c,d,e,f,g);
         break;
     case 7:
-        Serial.print("Seven");
-        Serial.println();
+        seven(a,b,c,d,e,f,g);
         break;
     case 8:
-        Serial.print("Eight");
-        Serial.println();
+        eight(a,b,c,d,e,f,g);
         break;
     case 9:
-        Serial.print("Nine");
-        Serial.println();
+        nine(a,b,c,d,e,f,g);
         break;
     case 0:
-        Serial.print("Zero");
-        Serial.println();
+        zero(a,b,c,d,e,f,g);
         break;
   }
 }
