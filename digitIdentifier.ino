@@ -17,50 +17,51 @@ void loop() {
 }
 
 void printer(tmElements_t _time){
-  digitIdentifier((_time.Hour/10)%10);
-  digitIdentifier(_time.Hour%10);
+  digitIdentifier((_time.Second/10)%10);
+  digitIdentifier(_time.Second%10);
+  Serial.println();
 }
 
 void digitIdentifier(int number){
   switch(number) {
     case 1:
-        Serial.print('One');
+        Serial.print("One");
         Serial.println();
         break;
     case 2:
-        Serial.print('Two');
+        Serial.print("Two");
         Serial.println();
         break;
     case 3:
-        Serial.print('Three');
+        Serial.print("Three");
         Serial.println();
         break;
     case 4:
-        Serial.print('Four');
+        Serial.print("Four");
         Serial.println();
         break;
     case 5:
-        Serial.print('Five');
+        Serial.print("Five");
         Serial.println();
         break;
     case 6:
-        Serial.print('Six');
+        Serial.print("Six");
         Serial.println();
         break;
     case 7:
-        Serial.print('Seven');
+        Serial.print("Seven");
         Serial.println();
         break;
     case 8:
-        Serial.print('Eight');
+        Serial.print("Eight");
         Serial.println();
         break;
     case 9:
-        Serial.print('Nine');
+        Serial.print("Nine");
         Serial.println();
         break;
     case 0:
-        Serial.print('Zero');
+        Serial.print("Zero");
         Serial.println();
         break;
   }
