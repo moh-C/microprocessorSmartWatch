@@ -15,17 +15,15 @@ void loop() {
 }
 
 void recvOneChar() {
- if (Serial.available() > 0) {
- receivedChar = Serial.read();
- _time = _time*10 + (receivedChar-48);
- newData = true;
- }
+    if (Serial.available() > 0) {
+    receivedChar = Serial.read();
+    _time = _time*10 + (receivedChar-48);
+    newData = true;
+    }
 }
 
 void showNewData() {
  if (newData == true) {
- Serial.print("This just in ... ");
- Serial.println(receivedChar);
- newData = false;
+    newData = false;
  }
 }
