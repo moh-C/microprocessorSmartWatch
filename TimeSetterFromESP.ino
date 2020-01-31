@@ -2,7 +2,8 @@
 #include <TimeLib.h>
 #include <DS1307RTC.h>
 
-int _time=0;
+int _time = 0;
+
 char receivedChar;
 boolean newData = false;
 
@@ -32,6 +33,7 @@ void setup() {
 }
 
 void loop() {
+  _time = _time % 100;
   if (RTC.read(tm)) {
     Serial.print("Ok, Time = ");
     print2digits(tm.Hour);
