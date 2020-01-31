@@ -27,8 +27,6 @@ void setup() {
   Serial.begin(115200);
   while (!Serial) ; // wait for serial
   delay(200);
-  Serial.println("DS1307RTC Read Test");
-  Serial.println("-------------------");
 }
 
 void loop() {
@@ -65,7 +63,6 @@ void loop() {
           // and configure the RTC with this info
           if (RTC.write(tm)) {
             //config = true;
-            Serial.println(1111);
           }
         }
     }
