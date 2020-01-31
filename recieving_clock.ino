@@ -1,6 +1,8 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
+#include<SoftwareSerial.h>
 
+int time_data = 1220;
 
 // WiFi network
 const char* ssid     = "Aaron";
@@ -48,14 +50,14 @@ void handleRoot() {
 
 
 void handleSave() {
-  if (server.arg("hh")!= ""){
-    Serial.println("Hours: " + server.arg("hh"));
+  time_data = (server.arg("hh")[0] - 48) * 1000 + (server.arg("hh")[1] - 48) * 100 + (server.arg("mm")[0] - 48) * 10 + (server.arg("mm")[1] - 48);
+  Serial.write(time_data);
+  /*if (server.arg("hh")!= ""){
+    Serial.write(server.arg("hh"));
   }
-
   if (server.arg("mm")!= ""){
-    Serial.println("Minutes: " + server.arg("mm"));
-  }
-
+    Serial.write(server.arg("mm"));
+  }*/
 }
 
 
@@ -84,8 +86,6 @@ void setup() {
 
   server.begin();
   Serial.println ( "HTTP server started" );
-
-
 }
 
 void loop() {

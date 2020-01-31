@@ -1,11 +1,11 @@
 int data;
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
 }
 
 void loop() {
   data = Serial.read();
-  Serial.println(data);
+  Serial.write();
   delay(1000);
 }
