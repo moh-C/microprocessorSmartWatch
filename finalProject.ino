@@ -1,6 +1,11 @@
 #include <Wire.h>
 #include <TimeLib.h>
 #include <DS1307RTC.h>
+#include <LiquidCrystal.h>
+#include "dht.h"
+
+LiquidCrystal lcd(3,4,5,6,7,8,9); //LiquidCrystal lcd(Rs, R/W, EN, D4, D5, D6, D7);
+dht DHT;
 
 int seg1_e = 13;
 int seg1_d = 12;
@@ -45,6 +50,8 @@ tmElements_t tm;
 
 
 void setup() {
+  lcd.begin(20, 4);
+
   while (!Serial) ; // wait for serial
   delay(200);
   
@@ -133,6 +140,29 @@ void loop() {
           }
         }
     }
+  int a=analogRead(A0);
+  lcd.setCursor(0,0); 
+  lcd.print(a); 
+  delay(500);
+  DHT.read11(2);
+  lcd.setCursor(0,1); 
+  lcd.print("humidity = ");
+  delay(500);
+  lcd.print(DHT.humidity);
+  lcd.print("%");
+  delay(500);
+  lcd.setCursor(0,2);
+  lcd.print("temperature = ");
+  delay(500);
+  lcd.print(DHT.temperature); 
+  lcd.print("C");
+  delay(500);
+  //lcd.setCursor(0,4);
+  //lcd.print(tm.Day);
+  //lcd.print("/");
+  //lcd.print(tm.Month);
+  //lcd.print("/");
+  // lcd.print(tm.Year);
 }
 
 void print2digits(int number) {
