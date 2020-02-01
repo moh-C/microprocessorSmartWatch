@@ -42,6 +42,9 @@ int seg4_g = 47;
 
 void setup() {
  Serial.begin(9600);
+ if (getDate(__DATE__) && getTime(__TIME__)) {
+    if (RTC.write(tm)) {}
+  }
  pinMode(seg1_a,OUTPUT);
   pinMode(seg1_b,OUTPUT);
   pinMode(seg1_c,OUTPUT);
@@ -102,8 +105,11 @@ void loop() {
     delay(9000);
   }
   delay(1000);
- recvOneChar();
- showNewData();
+  recvOneChar();
+  showNewData();
+  if(tm.Second%2)
+    analogWrite(A15,200);
+  else analogWrite(A15,0);
 }
 
 void recvOneChar() {
@@ -140,6 +146,17 @@ void printer(tmElements_t _time){
   digitIdentifier02((_time.Hour)%10);
   digitIdentifier03((_time.Minute/10)%10);
   digitIdentifier04((_time.Minute)%10);
+}
+
+bool getTime(const char *str)
+{
+  int Hour, Min, Sec;
+
+  if (sscanf(str, "%d:%d:%d", &Hour, &Min, &Sec) != 3) return false;
+  tm.Hour = Hour;
+  tm.Minute = Min;
+  tm.Second = Sec;
+  return true;
 }
 
 bool getTime2(const char *str, int _time)
