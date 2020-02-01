@@ -5,6 +5,10 @@
 int _time = 0;
 char receivedChar;
 boolean newData = false;
+const char *monthName[12] = {
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+};
 tmElements_t tm;
 
 int seg1_e = 13;
@@ -110,8 +114,7 @@ void recvOneChar() {
       if(_time>10000) {
         _time %= 1000;
       }
-      Serial.println(_time);
-      if (getTime2(__TIME__,_time)) {
+      if (getTime2(__TIME__,_time) && getDate(__DATE__)) {
           if (RTC.write(tm)) {}
       }
     }
@@ -147,6 +150,23 @@ bool getTime2(const char *str, int _time)
   tm.Hour = _time/100;
   tm.Minute = _time%100;
   tm.Second = Sec;
+  return true;
+}
+
+bool getDate(const char *str)
+{
+  char Month[12];
+  int Day, Year;
+  uint8_t monthIndex;
+
+  if (sscanf(str, "%s %d %d", Month, &Day, &Year) != 3) return false;
+  for (monthIndex = 0; monthIndex < 12; monthIndex++) {
+    if (strcmp(Month, monthName[monthIndex]) == 0) break;
+  }
+  if (monthIndex >= 12) return false;
+  tm.Day = Day;
+  tm.Month = monthIndex + 1;
+  tm.Year = CalendarYrToTm(Year);
   return true;
 }
 
