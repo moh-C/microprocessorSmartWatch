@@ -7,6 +7,15 @@
 LiquidCrystal lcd(3,4,5,6,7,8,9); //LiquidCrystal lcd(Rs, R/W, EN, D4, D5, D6, D7);
 dht DHT;
 
+int _time = 0;
+char receivedChar;
+boolean newData = false;
+const char *monthName[12] = {
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+};
+tmElements_t tm;
+
 int seg1_e = 13;
 int seg1_d = 12;
 int seg1_c = 11;
@@ -36,26 +45,12 @@ int seg4_a = 49;
 int seg4_f = 48;
 int seg4_g = 47;
 
-int _time = 0;
-
-char receivedChar;
-boolean newData = false;
-
-const char *monthName[12] = {
-  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-};
-
-tmElements_t tm;
-
-
 void setup() {
-  lcd.begin(20, 4);
-
-  while (!Serial) ; // wait for serial
-  delay(200);
-  
-  pinMode(seg1_a,OUTPUT);
+ Serial.begin(9600);
+ if (getDate(__DATE__) && getTime(__TIME__)) {
+    if (RTC.write(tm)) {}
+  }
+ pinMode(seg1_a,OUTPUT);
   pinMode(seg1_b,OUTPUT);
   pinMode(seg1_c,OUTPUT);
   pinMode(seg1_d,OUTPUT);
@@ -83,19 +78,6 @@ void setup() {
   pinMode(seg4_e,OUTPUT);
   pinMode(seg4_f,OUTPUT);
   pinMode(seg4_g,OUTPUT);
-
-  bool parse=false;
-  bool config=false;
-  if (getDate(__DATE__) && getTime(__TIME__)) {
-    parse = true;
-    if (RTC.write(tm)) {
-      config = true;
-    }
-  }
-
-  Serial.begin(115200);
-  while (!Serial) ;
-  delay(200);
 }
 
 void loop() {
@@ -127,42 +109,56 @@ void loop() {
     }
     delay(9000);
   }
+  delay(1000);
   recvOneChar();
   showNewData();
+  if(tm.Second%2)
+    analogWrite(A15,200);
+  else analogWrite(A15,0);
+
   
-  Serial.println(_time);
-  
-  delay(1000);
-  if(_time!=0)  {
-        if (getTime2(__TIME__,_time)) {
-          if (RTC.write(tm)) {
-            
-          }
-        }
-    }
-  int a=analogRead(A0);
-  lcd.setCursor(0,0); 
-  lcd.print(a); 
-  delay(500);
-  DHT.read11(2);
-  lcd.setCursor(0,1); 
+  lcd.setCursor(0,1);
+  DHT.read11(10);
   lcd.print("humidity = ");
   delay(500);
   lcd.print(DHT.humidity);
   lcd.print("%");
-  delay(500);
+  delay(50);
   lcd.setCursor(0,2);
   lcd.print("temperature = ");
-  delay(500);
   lcd.print(DHT.temperature); 
   lcd.print("C");
-  delay(500);
-  //lcd.setCursor(0,4);
-  //lcd.print(tm.Day);
-  //lcd.print("/");
-  //lcd.print(tm.Month);
-  //lcd.print("/");
-  // lcd.print(tm.Year);
+  lcd.setCursor(0,3);
+  lcd.print(tm.Day);
+  delay(50);
+  lcd.print("/");
+  lcd.print(tm.Month);
+  delay(50);
+  lcd.print("/");
+  lcd.print(tm.Year);
+  delay(50);
+}
+
+void recvOneChar() {
+    if (Serial.available() > 0) {
+    receivedChar = Serial.read();
+    if(receivedChar >= '0' && receivedChar <= '9') {
+      _time = _time*10 + (receivedChar-48);
+      if(_time>10000) {
+        _time %= 1000;
+      }
+      if (getTime2(__TIME__,_time) && getDate(__DATE__)) {
+          if (RTC.write(tm)) {}
+      }
+    }
+    newData = true;
+    }
+}
+
+void showNewData() {
+ if (newData == true) {
+    newData = false;
+ }
 }
 
 void print2digits(int number) {
@@ -170,6 +166,13 @@ void print2digits(int number) {
     Serial.write('0');
   }
   Serial.print(number);
+}
+
+void printer(tmElements_t _time){
+  digitIdentifier01((_time.Hour/10)%10);
+  digitIdentifier02((_time.Hour)%10);
+  digitIdentifier03((_time.Minute/10)%10);
+  digitIdentifier04((_time.Minute)%10);
 }
 
 bool getTime(const char *str)
@@ -183,13 +186,13 @@ bool getTime(const char *str)
   return true;
 }
 
-bool getTime2(const char *str, int this_hour)
+bool getTime2(const char *str, int _time)
 {
   int Hour, Min, Sec;
 
   if (sscanf(str, "%d:%d:%d", &Hour, &Min, &Sec) != 3) return false;
-  tm.Hour = this_hour;
-  tm.Minute = Min;
+  tm.Hour = _time/100;
+  tm.Minute = _time%100;
   tm.Second = Sec;
   return true;
 }
@@ -199,7 +202,7 @@ bool getDate(const char *str)
   char Month[12];
   int Day, Year;
   uint8_t monthIndex;
-  
+
   if (sscanf(str, "%s %d %d", Month, &Day, &Year) != 3) return false;
   for (monthIndex = 0; monthIndex < 12; monthIndex++) {
     if (strcmp(Month, monthName[monthIndex]) == 0) break;
@@ -209,27 +212,6 @@ bool getDate(const char *str)
   tm.Month = monthIndex + 1;
   tm.Year = CalendarYrToTm(Year);
   return true;
-}
-
-void recvOneChar() {
-    if (Serial.available() > 0) {
-    receivedChar = Serial.read();
-    _time = _time*10 + (receivedChar-48);
-    newData = true;
-    }
-}
-
-void showNewData() {
- if (newData == true) {
-    newData = false;
- }
-}
-
-void printer(tmElements_t _time){
-  digitIdentifier01((_time.Hour/10)%10);
-  digitIdentifier02((_time.Hour)%10);
-  digitIdentifier03((_time.Minute/10)%10);
-  digitIdentifier04((_time.Minute)%10);
 }
 
 void digitIdentifier01(int number){
