@@ -16,6 +16,21 @@ int seg2_b = 29;
 int seg2_a = 30;
 int seg2_f = 31;
 int seg2_g = 32;
+int seg3_e = 46;
+int seg3_d = 45;
+int seg3_c = 44;
+int seg3_b = 43;
+int seg3_a = 42;
+int seg3_f= 41;
+int seg3_g = 40;
+int seg4_e = 52;
+int seg4_d = 53;
+int seg4_c = 50;
+int seg4_b = 51;
+int seg4_a = 49;
+int seg4_f= 48;
+int seg4_g = 47;
+
 
 
 
