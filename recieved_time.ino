@@ -1,11 +1,10 @@
 // This data is recieved with serial
 
-int _time=0;
 char receivedChar;
 boolean newData = false;
 
 void setup() {
- Serial.begin(115200);
+ Serial.begin(9600);
 }
 
 void loop() {
@@ -16,7 +15,7 @@ void loop() {
 void recvOneChar() {
     if (Serial.available() > 0) {
     receivedChar = Serial.read();
-    _time = _time*10 + (receivedChar-48);
+    Serial.println(receivedChar);
     newData = true;
     }
 }
