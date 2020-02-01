@@ -1,87 +1,114 @@
-#include <Wire.h>
-#include <TimeLib.h>
-#include <DS1307RTC.h>
-
-int a = 9;
-int b = 10;
-int c = 8;
-int d = 7;
-int e = 6;
-int f = 11;
-int g = 12;
+int seg1_e = 13;
+int seg1_d = 12;
+int seg1_c = 11;
+int seg1_b = 22;
+int seg1_a = 23;
+int seg1_f = 24;
+int seg1_g = 25;
+int seg2_e = 26;
+int seg2_d = 27;
+int seg2_c = 28;
+int seg2_b = 29;
+int seg2_a = 30;
+int seg2_f = 31;
+int seg2_g = 32;
+int seg3_e = 46;
+int seg3_d = 45;
+int seg3_c = 44;
+int seg3_b = 43;
+int seg3_a = 42;
+int seg3_f = 41;
+int seg3_g = 40;
+int seg4_e = 52;
+int seg4_d = 53;
+int seg4_c = 50;
+int seg4_b = 51;
+int seg4_a = 49;
+int seg4_f = 48;
+int seg4_g = 47;
 
 void setup() {
-  Serial.begin(9600);
-  while (!Serial) ; // wait for serial
-  delay(200);
-  
-  pinMode(a,OUTPUT);
-  pinMode(b,OUTPUT);
-  pinMode(c,OUTPUT);
-  pinMode(d,OUTPUT);
-  pinMode(e,OUTPUT);
-  pinMode(f,OUTPUT);
-  pinMode(g,OUTPUT);
+  pinMode(seg1_a,OUTPUT);
+  pinMode(seg1_b,OUTPUT);
+  pinMode(seg1_c,OUTPUT);
+  pinMode(seg1_d,OUTPUT);
+  pinMode(seg1_e,OUTPUT);
+  pinMode(seg1_f,OUTPUT);
+  pinMode(seg1_g,OUTPUT);
+  pinMode(seg2_a,OUTPUT);
+  pinMode(seg2_b,OUTPUT);
+  pinMode(seg2_c,OUTPUT);
+  pinMode(seg2_d,OUTPUT);
+  pinMode(seg2_e,OUTPUT);
+  pinMode(seg2_f,OUTPUT);
+  pinMode(seg2_g,OUTPUT);
+  pinMode(seg3_a,OUTPUT);
+  pinMode(seg3_b,OUTPUT);
+  pinMode(seg3_c,OUTPUT);
+  pinMode(seg3_d,OUTPUT);
+  pinMode(seg3_e,OUTPUT);
+  pinMode(seg3_f,OUTPUT);
+  pinMode(seg3_g,OUTPUT);
+  pinMode(seg4_a,OUTPUT);
+  pinMode(seg4_b,OUTPUT);
+  pinMode(seg4_c,OUTPUT);
+  pinMode(seg4_d,OUTPUT);
+  pinMode(seg4_e,OUTPUT);
+  pinMode(seg4_f,OUTPUT);
+  pinMode(seg4_g,OUTPUT);
 }
 
 void loop() {
-  tmElements_t tm;
-
-  if (RTC.read(tm)) {
-    Serial.print("Ok, Time = ");
-    print2digits(tm.Hour);
-    Serial.write(':');
-    print2digits(tm.Minute);
-    Serial.write(':');
-    print2digits(tm.Second);
-    Serial.print(", Date (D/M/Y) = ");
-    Serial.print(tm.Day);
-    Serial.write('/');
-    Serial.print(tm.Month);
-    Serial.write('/');
-    Serial.print(tmYearToCalendar(tm.Year));
-    Serial.println();
-  } else {
-    if (RTC.chipPresent()) {
-      Serial.println("The DS1307 is stopped.  Please run the SetTime");
-      Serial.println("example to initialize the time and begin running.");
-      Serial.println();
-    } else {
-      Serial.println("DS1307 read error!  Please check the circuitry.");
-      Serial.println();
-    }
-    delay(9000);
-  }
+  zero(seg1_a,seg1_b,seg1_c,seg1_d,seg1_e,seg1_f,seg1_g);
+  zero(seg2_a,seg2_b,seg2_c,seg2_d,seg2_e,seg2_f,seg2_g);
+  zero(seg3_a,seg3_b,seg3_c,seg3_d,seg3_e,seg3_f,seg3_g);
+  zero(seg4_a,seg4_b,seg4_c,seg4_d,seg4_e,seg4_f,seg4_g);
   delay(1000);
-  /*
-  zero(a,b,c,d,e,f,g);
+  one(seg1_a,seg1_b,seg1_c,seg1_d,seg1_e,seg1_f,seg1_g);
+  one(seg2_a,seg2_b,seg2_c,seg2_d,seg2_e,seg2_f,seg2_g);
+  one(seg3_a,seg3_b,seg3_c,seg3_d,seg3_e,seg3_f,seg3_g);
+  one(seg4_a,seg4_b,seg4_c,seg4_d,seg4_e,seg4_f,seg4_g);
   delay(1000);
-  one(a,b,c,d,e,f,g);
+  two(seg1_a,seg1_b,seg1_c,seg1_d,seg1_e,seg1_f,seg1_g);
+  two(seg2_a,seg2_b,seg2_c,seg2_d,seg2_e,seg2_f,seg2_g);
+  two(seg3_a,seg3_b,seg3_c,seg3_d,seg3_e,seg3_f,seg3_g);
+  two(seg4_a,seg4_b,seg4_c,seg4_d,seg4_e,seg4_f,seg4_g);
   delay(1000);
-  two(a,b,c,d,e,f,g);
+  three(seg1_a,seg1_b,seg1_c,seg1_d,seg1_e,seg1_f,seg1_g);
+  three(seg2_a,seg2_b,seg2_c,seg2_d,seg2_e,seg2_f,seg2_g);
+  three(seg3_a,seg3_b,seg3_c,seg3_d,seg3_e,seg3_f,seg3_g);
+  three(seg4_a,seg4_b,seg4_c,seg4_d,seg4_e,seg4_f,seg4_g);
   delay(1000);
-  three(a,b,c,d,e,f,g);
+  four(seg1_a,seg1_b,seg1_c,seg1_d,seg1_e,seg1_f,seg1_g);
+  four(seg2_a,seg2_b,seg2_c,seg2_d,seg2_e,seg2_f,seg2_g);
+  four(seg3_a,seg3_b,seg3_c,seg3_d,seg3_e,seg3_f,seg3_g);
+  four(seg4_a,seg4_b,seg4_c,seg4_d,seg4_e,seg4_f,seg4_g);
   delay(1000);
-  four(a,b,c,d,e,f,g);
+  five(seg1_a,seg1_b,seg1_c,seg1_d,seg1_e,seg1_f,seg1_g);
+  five(seg2_a,seg2_b,seg2_c,seg2_d,seg2_e,seg2_f,seg2_g);
+  five(seg3_a,seg3_b,seg3_c,seg3_d,seg3_e,seg3_f,seg3_g);
+  five(seg4_a,seg4_b,seg4_c,seg4_d,seg4_e,seg4_f,seg4_g);
   delay(1000);
-  five(a,b,c,d,e,f,g);
+  six(seg1_a,seg1_b,seg1_c,seg1_d,seg1_e,seg1_f,seg1_g);
+  six(seg2_a,seg2_b,seg2_c,seg2_d,seg2_e,seg2_f,seg2_g);
+  six(seg3_a,seg3_b,seg3_c,seg3_d,seg3_e,seg3_f,seg3_g);
+  six(seg4_a,seg4_b,seg4_c,seg4_d,seg4_e,seg4_f,seg4_g);
   delay(1000);
-  six(a,b,c,d,e,f,g);
+  seven(seg1_a,seg1_b,seg1_c,seg1_d,seg1_e,seg1_f,seg1_g);
+  seven(seg2_a,seg2_b,seg2_c,seg2_d,seg2_e,seg2_f,seg2_g);
+  seven(seg3_a,seg3_b,seg3_c,seg3_d,seg3_e,seg3_f,seg3_g);
+  seven(seg4_a,seg4_b,seg4_c,seg4_d,seg4_e,seg4_f,seg4_g);
   delay(1000);
-  seven(a,b,c,d,e,f,g);
+  eight(seg1_a,seg1_b,seg1_c,seg1_d,seg1_e,seg1_f,seg1_g);
+  eight(seg2_a,seg2_b,seg2_c,seg2_d,seg2_e,seg2_f,seg2_g);
+  eight(seg3_a,seg3_b,seg3_c,seg3_d,seg3_e,seg3_f,seg3_g);
+  eight(seg4_a,seg4_b,seg4_c,seg4_d,seg4_e,seg4_f,seg4_g);
   delay(1000);
-  eight(a,b,c,d,e,f,g);
+  nine(seg1_a,seg1_b,seg1_c,seg1_d,seg1_e,seg1_f,seg1_g);
+  nine(seg2_a,seg2_b,seg2_c,seg2_d,seg2_e,seg2_f,seg2_g);
+  nine(seg3_a,seg3_b,seg3_c,seg3_d,seg3_e,seg3_f,seg3_g);
+  nine(seg4_a,seg4_b,seg4_c,seg4_d,seg4_e,seg4_f,seg4_g);
   delay(1000);
-  nine(a,b,c,d,e,f,g);
-  delay(1000);
-  */
-}
-
-void print2digits(int number) {
-  if (number >= 0 && number < 10) {
-    Serial.write('0');
-  }
-  Serial.print(number);
 }
 
 void zero(int a_block, int b_block, int c_block, int d_block, int e_block, int f_block, int g_block){
