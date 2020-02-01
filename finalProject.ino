@@ -21,21 +21,30 @@ int seg3_d = 45;
 int seg3_c = 44;
 int seg3_b = 43;
 int seg3_a = 42;
-int seg3_f= 41;
+int seg3_f = 41;
 int seg3_g = 40;
 int seg4_e = 52;
 int seg4_d = 53;
 int seg4_c = 50;
 int seg4_b = 51;
 int seg4_a = 49;
-int seg4_f= 48;
+int seg4_f = 48;
 int seg4_g = 47;
 
+int _time = 0;
 
+char receivedChar;
+boolean newData = false;
+
+const char *monthName[12] = {
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+};
+
+tmElements_t tm;
 
 
 void setup() {
-  Serial.begin(9600);
   while (!Serial) ; // wait for serial
   delay(200);
   
@@ -46,12 +55,59 @@ void setup() {
   pinMode(seg1_e,OUTPUT);
   pinMode(seg1_f,OUTPUT);
   pinMode(seg1_g,OUTPUT);
+  pinMode(seg2_a,OUTPUT);
+  pinMode(seg2_b,OUTPUT);
+  pinMode(seg2_c,OUTPUT);
+  pinMode(seg2_d,OUTPUT);
+  pinMode(seg2_e,OUTPUT);
+  pinMode(seg2_f,OUTPUT);
+  pinMode(seg2_g,OUTPUT);
+  pinMode(seg3_a,OUTPUT);
+  pinMode(seg3_b,OUTPUT);
+  pinMode(seg3_c,OUTPUT);
+  pinMode(seg3_d,OUTPUT);
+  pinMode(seg3_e,OUTPUT);
+  pinMode(seg3_f,OUTPUT);
+  pinMode(seg3_g,OUTPUT);
+  pinMode(seg4_a,OUTPUT);
+  pinMode(seg4_b,OUTPUT);
+  pinMode(seg4_c,OUTPUT);
+  pinMode(seg4_d,OUTPUT);
+  pinMode(seg4_e,OUTPUT);
+  pinMode(seg4_f,OUTPUT);
+  pinMode(seg4_g,OUTPUT);
+
+  bool parse=false;
+  bool config=false;
+  if (getDate(__DATE__) && getTime(__TIME__)) {
+    parse = true;
+    if (RTC.write(tm)) {
+      config = true;
+    }
+  }
+
+  Serial.begin(115200);
+  while (!Serial) ;
+  delay(200);
 }
 
 void loop() {
   tmElements_t tm;
 
   if (RTC.read(tm)) {
+    Serial.print("Ok, Time = ");
+    print2digits(tm.Hour);
+    Serial.write(':');
+    print2digits(tm.Minute);
+    Serial.write(':');
+    print2digits(tm.Second);
+    Serial.print(", Date (D/M/Y) = ");
+    Serial.print(tm.Day);
+    Serial.write('/');
+    Serial.print(tm.Month);
+    Serial.write('/');
+    Serial.print(tmYearToCalendar(tm.Year));
+    Serial.println();
     printer(tm);
   } else {
     if (RTC.chipPresent()) {
@@ -64,7 +120,79 @@ void loop() {
     }
     delay(9000);
   }
+  recvOneChar();
+  showNewData();
+  
+  Serial.println(_time);
+  
   delay(1000);
+  if(_time!=0)  {
+        if (getTime2(__TIME__,_time)) {
+          if (RTC.write(tm)) {
+            
+          }
+        }
+    }
+}
+
+void print2digits(int number) {
+  if (number >= 0 && number < 10) {
+    Serial.write('0');
+  }
+  Serial.print(number);
+}
+
+bool getTime(const char *str)
+{
+  int Hour, Min, Sec;
+
+  if (sscanf(str, "%d:%d:%d", &Hour, &Min, &Sec) != 3) return false;
+  tm.Hour = Hour;
+  tm.Minute = Min;
+  tm.Second = Sec;
+  return true;
+}
+
+bool getTime2(const char *str, int this_hour)
+{
+  int Hour, Min, Sec;
+
+  if (sscanf(str, "%d:%d:%d", &Hour, &Min, &Sec) != 3) return false;
+  tm.Hour = this_hour;
+  tm.Minute = Min;
+  tm.Second = Sec;
+  return true;
+}
+
+bool getDate(const char *str)
+{
+  char Month[12];
+  int Day, Year;
+  uint8_t monthIndex;
+  
+  if (sscanf(str, "%s %d %d", Month, &Day, &Year) != 3) return false;
+  for (monthIndex = 0; monthIndex < 12; monthIndex++) {
+    if (strcmp(Month, monthName[monthIndex]) == 0) break;
+  }
+  if (monthIndex >= 12) return false;
+  tm.Day = Day;
+  tm.Month = monthIndex + 1;
+  tm.Year = CalendarYrToTm(Year);
+  return true;
+}
+
+void recvOneChar() {
+    if (Serial.available() > 0) {
+    receivedChar = Serial.read();
+    _time = _time*10 + (receivedChar-48);
+    newData = true;
+    }
+}
+
+void showNewData() {
+ if (newData == true) {
+    newData = false;
+ }
 }
 
 void printer(tmElements_t _time){
